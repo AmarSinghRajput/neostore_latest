@@ -9,28 +9,29 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-
 import GeneralStatusBarColor from '../components/StatusBar/GeneralStatusBarColor';
+import MapView, {Marker} from 'react-native-maps';
+import ScreenDimention from '../commonHelpers/ScreenDimention';
 
 const stores = [
   {
-    name: 'NeoStore1',
+    name: 'NEOSTORE1',
     address: 'Rabale, Navi Mumbai, MH',
   },
   {
-    name: 'NeoStore2',
+    name: 'NEOSTORE2',
     address: 'Rabale, Navi Mumbai, MH',
   },
   {
-    name: 'NeoStore3',
+    name: 'NEOSTORE3',
     address: 'Rabale, Navi Mumbai, MH',
   },
   {
-    name: 'NeoStore4',
+    name: 'NEOSTORE4',
     address: 'Rabale, Navi Mumbai, MH',
   },
   {
-    name: 'NeoStore5',
+    name: 'NEOSTORE5',
     address: 'Rabale, Navi Mumbai, MH',
   },
 ];
@@ -55,54 +56,39 @@ export default StoreLocator = (props) => {
       <SafeAreaView style={{flexGrow: 1}}>
         {/* NAVIGATION BAR */}
         <NavigationBar {...navProps} />
-        {/* list */}
+        <MapView
+          style={styles.MapView}
+          initialRegion={{
+            latitude: 19.141297,
+            longitude: 73.008888,
+            latitudeDelta: 0.00922,
+            longitudeDelta: 0.00421,
+          }}>
+          <Marker
+            coordinate={{latitude: '19.141297', longitude: '73.008888'}}
+            image={require('../../assets/icons/pin.png')}
+          />
+        </MapView>
+        {/* store list */}
         <FlatList
           showsVerticalScrollIndicator={false}
-          style={styles.productList}
-          data={tables}
+          style={styles.storeList}
+          data={stores}
           keyExtractor={(item, index) => index}
           renderItem={({item}) => (
-            <TouchableOpacity style={styles.row}>
-              <Image
-                style={styles.thumbnail}
-                source={require('../../assets/images/banners/banner_image_one.jpg')}
-              />
-              <View style={styles.prductInfoContainer}>
-                <Text style={styles.productName}>
-                  Stylish Modern Dining Tables
-                </Text>
-                <Text style={styles.productDec}>Aron Table Center</Text>
-                <View style={styles.priceNRatingContainer}>
-                  <Text style={styles.price}> Rs 27,390</Text>
-                  <View style={styles.rating}>
-                    {/* <StarRating
-                      disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
-                      maxStars={7}
-                      // rating={this.state.starCount}
-                      // selectedStar={(rating) => this.onStarRatingPress(rating)}
-                      fullStarColor={'red'}
-                    /> */}
-                  </View>
-                </View>
-              </View>
-              {/* <Text>{item.title}</Text> */}
-
-              {/* <TouchableOpacity>
+            <View>
+              <TouchableOpacity style={styles.row}>
                 <Image
-                  style={{
-                    height: '100%',
-                    width: '100%',
-                    resizeMode: 'stretch',
-                    borderRadius: 2,
-                  }}
-                  source={item.thumbnail}
+                  style={styles.listmarker}
+                  source={require('../../assets/icons/marker.png')}
                 />
-              </TouchableOpacity> */}
-            </TouchableOpacity>
+                <View style={styles.storeInfoContainer}>
+                  <Text style={styles.storeName}>{item.name}</Text>
+                  <Text style={styles.storeAddress}>{item.address}</Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{height: 0.5, backgroundColor: 'black'}}></View>
+            </View>
           )}
         />
       </SafeAreaView>
@@ -112,40 +98,25 @@ export default StoreLocator = (props) => {
 
 const styles = StyleSheet.create({
   container: {flexGrow: 1},
-  productList: {flex: 1},
+  MapView: {height: 200},
+  storeList: {flex: 1},
   row: {
     flexDirection: 'row',
+    padding: 10,
+    alignContent: 'center',
   },
-  thumbnail: {
+  listmarker: {
     marginLeft: 18,
-    marginTop: 20,
-    height: 90,
-    width: 100,
+    marginTop: 8,
+    height: 25,
+    width: 30,
   },
-  prductInfoContainer: {
-    marginTop: 22,
-    marginLeft: 8,
+  storeInfoContainer: {
+    marginLeft: 18,
   },
-  productName: {
-    fontSize: 16,
+  storeName: {
+    fontSize: 17,
     fontWeight: 'bold',
   },
-  productDec: {marginTop: 6, fontSize: 14, color: 'gray'},
-  priceNRatingContainer: {
-    marginTop: 10,
-    flexGrow: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  price: {
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: 28,
-  },
-  rating: {
-    marginLeft: 20,
-    width: 120,
-    // fontSize: 28,
-    // height: 5,
-  },
+  storeAddress: {marginTop: 3, fontSize: 14, color: 'dimgray'},
 });

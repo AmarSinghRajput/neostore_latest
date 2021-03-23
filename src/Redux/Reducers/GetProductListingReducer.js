@@ -1,39 +1,41 @@
-import LoginActionType from '../ActionTypes/LoginActionType';
+import ProductListingType from '../ActionTypes/ProductListingType';
 
 //─── initial state ───────────────────────────────────────────────────────────
 const INITIAL_STATE = {
-  loginData: null,
-  isLoggedIn: false,
+  productListingData: [],
   error: false,
-  message: '',
 };
 
-export default LoginReducer = (state = INITIAL_STATE, action) => {
+export default GetProductListingReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case LoginActionType.REQ_SUCCESS: {
+    case ProductListingType.REQ_SUCCESS: {
       // success state of the async call
       console.log('action-->type', action.type);
-      console.log('login response ---> ', action.payload);
+      console.log('listing response ---> ', action.payload);
       return {
         ...state,
-        loginData: action.payload,
-        isLoggedIn: true,
+        productListingData: state.productListingData.concat(
+          JSON.parse(action.payload),
+        ),
         error: false,
       };
     }
-    case LoginActionType.REQ_FAILURE: {
+    case ProductListingType.REQ_FAILURE: {
       // failed state of the async call
       console.log('action-->type', action.type);
-      console.log('login response failed---> ', action.payload.user_msg);
       return {
         ...state,
-        loginData: null,
-        isLoggedIn: false,
+        productListingData: [],
         error: true,
-        message: action.payload.user_msg,
       };
     }
-
+    case ProductListingType.REQ_CLEARLISTING: {
+      return {
+        ...state,
+        productListingData: [],
+        error: false,
+      };
+    }
     default:
       console.log('action-->type', action.type);
       return state;

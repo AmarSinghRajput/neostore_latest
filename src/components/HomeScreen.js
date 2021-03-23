@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,55 +7,24 @@ import {
   Text,
   View,
   FlatList,
+  Modal,
 } from 'react-native';
 import {FlatListSlider} from 'react-native-flatlist-slider';
 import GeneralStatusBarColor from './StatusBar/GeneralStatusBarColor';
 import NavigationBar from '../components/NavigationBar/NavBar';
 import ScreenDimention from '../commonHelpers/ScreenDimention';
-
-const sliderImgs = [
-  {
-    banner: require('../../assets/images/banners/banner_image_one.jpg'),
-    desc: 'you selected for 1st img ',
-  },
-  {
-    banner: require('../../assets/images/banners/banner_image_two.jpg'),
-    desc: 'you selected for 2nd img ',
-  },
-  {
-    banner: require('../../assets/images/banners/banner_image_three.jpg'),
-    desc: 'you selected for 3rd img ',
-  },
-  {
-    banner: require('../../assets/images/banners/banner_image_four.jpg'),
-    desc: 'you selected for 4th img ',
-  },
-];
-
-const thumbnails = [
-  {
-    thumbnail: require('../../assets/images/thumbnails/chairs_icon.png'),
-    desc: 'you selected for 1st img ',
-  },
-  {
-    thumbnail: require('../../assets/images/thumbnails/cupboard_icon.png'),
-    desc: 'you selected for 2nd img ',
-  },
-  {
-    thumbnail: require('../../assets/images/thumbnails/sofa_icon.png'),
-    desc: 'you selected for 3rd img ',
-  },
-  {
-    thumbnail: require('../../assets/images/thumbnails/tables_icon.png'),
-    desc: 'you selected for 4th img ',
-  },
-  {
-    thumbnail: require('../../assets/images/thumbnails/tables_icon.png'),
-    desc: 'you selected for 4th img ',
-  },
-];
+import DummyData from '../commonHelpers/DummyData';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchproductListing} from '../Redux/Actions/ProductListingAction';
+import Loader from '../components/Loader/Loader';
 
 export default HomeScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+  const [animating, setAnimating] = useState(false);
+  const listingData = useSelector(
+    (state) => state.productListingReducer.productListingData,
+  );
+
   const navProps = {
     title: 'NeoStore',
     leftIcon: require('../../assets/icons/menu.png'),
@@ -65,6 +34,12 @@ export default HomeScreen = ({navigation}) => {
     },
     rightBtnAction: () => {},
   };
+
+  useEffect(() => {
+    setAnimating(false);
+    navigation.navigate('productList');
+  }, [listingData]);
+
   return (
     <View style={{flex: 1}}>
       {/* custom colored status bar */}
@@ -77,28 +52,32 @@ export default HomeScreen = ({navigation}) => {
         <NavigationBar {...navProps} />
         <View style={styles.imageSlider}>
           {/* for remote image slider uncomment */}
-
           <FlatListSlider
-            height={ScreenDimention.Height * 0.35}
-            data={sliderImgs}
+            height={ScreenDimention.Height * 0.34}
+            data={DummyData.homeSliderImages}
             imageKey={'banner'}
             autoscroll={false}
             indicatorContainerStyle={{position: 'absolute', bottom: 8}}
             local
             onPress={(item) => {
-              alert(sliderImgs[item].desc);
+              alert(DummyData.homeSliderImages[item].desc);
             }}
           />
         </View>
         {/* collection */}
         <FlatList
+          scrollEnabled={false}
           style={styles.flatListStyle}
           numColumns={2}
-          data={thumbnails}
+          data={DummyData.homeThumbnails}
           keyExtractor={(item, index) => index}
           renderItem={({item}) => (
             <View style={styles.thumbnails}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setAnimating(true);
+                  dispatch(fetchproductListing(item.categoryId, 10, 1));
+                }}>
                 <Image
                   style={{
                     height: '100%',
@@ -112,6 +91,15 @@ export default HomeScreen = ({navigation}) => {
             </View>
           )}
         />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={animating}
+          onRequestClose={() => {
+            setModalVisible(!animating);
+          }}>
+          <Loader />
+        </Modal>
       </SafeAreaView>
     </View>
   );
@@ -120,20 +108,15 @@ export default HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: 'gray',
   },
   imageSlider: {
-    height: ScreenDimention.Height * 0.35,
-    // backgroundColor: 'green',
+    height: ScreenDimention.Height * 0.298,
   },
-  flatListStyle: {
-    // backgroundColor: 'yellow',
-  },
+  flatListStyle: {},
   thumbnails: {
     width: ScreenDimention.Width * 0.47,
     height: ScreenDimention.Height * 0.29,
     margin: 5,
-    // backgroundColor: 'silver',
     flex: 1 / 2,
     justifyContent: 'space-around',
   },

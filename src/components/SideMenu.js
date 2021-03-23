@@ -17,7 +17,7 @@ const menuItems = [
   {
     title: 'My Cart',
     icon: require('../../assets/images/menuIcons/cart.png'),
-    navName: 'Home',
+    navName: 'home',
   },
   {
     title: 'Tables',
@@ -42,22 +42,22 @@ const menuItems = [
   {
     title: 'My Account',
     icon: require('../../assets/icons/user.png'),
-    navName: 'addressList',
+    navName: 'myAccount',
   },
   {
     title: 'Store Locator',
     icon: require('../../assets/images/menuIcons/locator.png'),
-    navName: 'OrderDetails',
+    navName: 'storeLocator',
   },
   {
     title: 'My Orders',
     icon: require('../../assets/images/menuIcons/orders.png'),
-    navName: 'MyOrders',
+    navName: 'myOrders',
   },
   {
     title: 'Logout',
     icon: require('../../assets/images/menuIcons/logout.png'),
-    navName: 'AuthStack',
+    navName: 'authStack',
   },
 ];
 export default SideMenu = ({navigation}) => {

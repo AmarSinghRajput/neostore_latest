@@ -17,6 +17,7 @@ export default LoginService = (email, password, callBack) => {
 
   axios(config)
     .then(function (response) {
+      console.log('asdasd');
       if (response.status == 200) {
         // ─── saving data in Aysnc storage ───────────────────────────────────────────────────────────
         const loginData = JSON.stringify(response.data['data']);

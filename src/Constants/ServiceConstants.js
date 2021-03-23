@@ -1,8 +1,9 @@
 //─── baseURL ───────────────────────────────────────────────────────────
 
-export const Base_Url = 'http://staging.php-dev.in:8844/trainingapp/api/users/';
+export const Base_Url = 'http://staging.php-dev.in:8844/trainingapp/api/';
 
 //─── endpoints ───────────────────────────────────────────────────────────
 export const Endpoints = {
-  login: 'login',
+  login: 'users/login',
+  getProductList: 'products/getList?',
 };

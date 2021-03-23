@@ -11,7 +11,10 @@ export const loginUser = (email, password) => {
       // ─── storing data in Redux store ───────────────────────────────────────────────────────────
       response && data != undefined
         ? dispatch({type: LoginActionType.REQ_SUCCESS, payload: data})
-        : dispatch({type: LoginActionType.REQ_FAILURE});
+        : dispatch({
+            type: LoginActionType.REQ_FAILURE,
+            payload: response,
+          });
     });
   };
 };

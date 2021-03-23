@@ -1,5 +1,5 @@
 // @flow
-import * as React from 'react';
+import React, {useState, useEffect, useReducer} from 'react';
 import {
   View,
   StyleSheet,
@@ -9,58 +9,40 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
+import ScreenDimention from '../commonHelpers/ScreenDimention';
 import StarRating from 'react-native-star-rating';
 import GeneralStatusBarColor from '../components/StatusBar/GeneralStatusBarColor';
+import {useDispatch, useSelector} from 'react-redux';
+import {clearProductListing} from '../Redux/Actions/ProductListingAction';
+import StoreLocator from './StoreLocator';
 
-const tables = [
-  {
-    thumbnail: '',
-    productName: '1',
-    productDesc: '',
-    price: '',
-    rating: '',
-  },
-  {
-    thumbnail: '',
-    productName: '1',
-    productDesc: '',
-    price: '',
-    rating: '',
-  },
-  {
-    thumbnail: '',
-    productName: '1',
-    productDesc: '',
-    price: '',
-    rating: '',
-  },
-  {
-    thumbnail: '',
-    productName: '1',
-    productDesc: '',
-    price: '',
-    rating: '',
-  },
-  {
-    thumbnail: '',
-    productName: '1',
-    productDesc: '',
-    price: '',
-    rating: '',
-  },
-];
 export default ProductsList = (props) => {
+  const dispatch = useDispatch();
+  const listingData =
+    useSelector((state) => state.productListingReducer.productListingData) !=
+    null
+      ? useSelector((state) => state.productListingReducer.productListingData)
+      : null;
+
+  useEffect(() => {
+    if (listingData.length == 0) {
+      props.navigation.goBack();
+    }
+  }, [listingData]);
+
   const navProps = {
     title: props.title,
     leftIcon: require('../../assets/icons/backBtn.png'),
     rightIcon: require('../../assets/icons/search.png'),
     leftBtnAction: () => {
-      props.navigation.goBack();
+      dispatch(clearProductListing());
     },
     rightBtnAction: () => {
       console.log('search btn pressed');
+      console.log('listing data ', listingData);
     },
   };
+
   return (
     <View style={styles.container}>
       <GeneralStatusBarColor
@@ -72,53 +54,31 @@ export default ProductsList = (props) => {
         <NavigationBar {...navProps} />
         {/* list */}
         <FlatList
+          extraData={listingData}
           showsVerticalScrollIndicator={false}
           style={styles.productList}
-          data={tables}
+          data={listingData}
           keyExtractor={(item, index) => index}
-          renderItem={({item}) => (
-            <TouchableOpacity style={styles.row}>
-              <Image
-                style={styles.thumbnail}
-                source={require('../../assets/images/banners/banner_image_one.jpg')}
-              />
-              <View style={styles.prductInfoContainer}>
-                <Text style={styles.productName}>
-                  Stylish Modern Dining Tables
-                </Text>
-                <Text style={styles.productDec}>Aron Table Center</Text>
-                <View style={styles.priceNRatingContainer}>
-                  <Text style={styles.price}> Rs 27,390</Text>
-                  <View style={styles.rating}>
-                    {/* <StarRating
-                      disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
-                      maxStars={7}
-                      // rating={this.state.starCount}
-                      // selectedStar={(rating) => this.onStarRatingPress(rating)}
-                      fullStarColor={'red'}
-                    /> */}
+          renderItem={(item) => {
+            console.log('checking listing data', listingData[0]['name']);
+            console.log('checking--> ', item.item.name);
+            return (
+              <TouchableOpacity style={styles.row}>
+                <Image
+                  style={styles.thumbnail}
+                  source={{uri: item.item.product_images}}
+                />
+                <View style={styles.prductInfoContainer}>
+                  <Text style={styles.productName}>{item.item.name}</Text>
+                  <Text style={styles.productDec}>{item.item.description}</Text>
+                  <View style={styles.priceNRatingContainer}>
+                    <Text style={styles.price}>{item.item.cost}</Text>
+                    <View style={styles.rating}></View>
                   </View>
                 </View>
-              </View>
-              {/* <Text>{item.title}</Text> */}
-
-              {/* <TouchableOpacity>
-                <Image
-                  style={{
-                    height: '100%',
-                    width: '100%',
-                    resizeMode: 'stretch',
-                    borderRadius: 2,
-                  }}
-                  source={item.thumbnail}
-                />
-              </TouchableOpacity> */}
-            </TouchableOpacity>
-          )}
+              </TouchableOpacity>
+            );
+          }}
         />
       </SafeAreaView>
     </View>
@@ -134,18 +94,24 @@ const styles = StyleSheet.create({
   thumbnail: {
     marginLeft: 18,
     marginTop: 20,
-    height: 90,
-    width: 100,
+    height: ScreenDimention.Height * 0.12,
+    width: ScreenDimention.Height * 0.12,
   },
   prductInfoContainer: {
     marginTop: 22,
     marginLeft: 8,
   },
   productName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    color: 'black',
   },
-  productDec: {marginTop: 6, fontSize: 14, color: 'gray'},
+  productDec: {
+    marginTop: 6,
+    fontSize: 14,
+    color: 'gray',
+    height: 14,
+    width: ScreenDimention.Width * 0.5,
+  },
   priceNRatingContainer: {
     marginTop: 10,
     flexGrow: 1,
@@ -154,13 +120,11 @@ const styles = StyleSheet.create({
   },
   price: {
     color: 'red',
-    fontWeight: 'bold',
-    fontSize: 28,
+    // fontWeight: 'bold',
+    fontSize: 20,
   },
   rating: {
     marginLeft: 20,
     width: 120,
-    // fontSize: 28,
-    // height: 5,
   },
 });

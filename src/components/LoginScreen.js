@@ -24,6 +24,14 @@ export default LoginScreen = (props) => {
     password: '',
   });
 
+  const loginError =
+    useSelector((state) => state.loginReducer.error) != null
+      ? useSelector((state) => state.loginReducer.error)
+      : false;
+  // const message =
+  //   useSelector((state) => state.loginReducer.message) != null
+  //     ? useSelector((state) => state.loginReducer.message)
+  //     : '';
   const IsLogin =
     useSelector((state) => state.loginReducer.isLoggedIn) != null
       ? useSelector((state) => state.loginReducer.isLoggedIn)
@@ -47,8 +55,12 @@ export default LoginScreen = (props) => {
       setAnimating(false);
       props.navigation.navigate('App');
     }
+    if (loginError) {
+      setAnimating(false);
+      // alert(message);
+    }
     console.log('IsLogin = ', IsLogin);
-  }, [IsLogin]);
+  }, [IsLogin, loginError]);
 
   return (
     <View style={{flex: 1}}>
